@@ -1,14 +1,36 @@
 // IDBDatabase
 let database={
-  page_title:"Find Meal For Your Ingredients.",
-  page_heading:"Find Meals For Your Ingredients",
+  page_title:"Find Meal For Your Ingredients. ",
+  page_heading:"Find Meals For Your Ingredients. version2",
   block_quote:"Real food doesn't have ingredients, real food is ingredients.",
   cite_text:"- Jamie Oliver",
   meal_result_title:"Your Search Results:"
 
 }
+
 // creating Element for the DOM
+function preloader(){
+  // query querySelector
+  const body = document.querySelector('body')
+  // create elements
+  const preloaderDiv = document.createElement('div')
+  const spinerDiv= document.createElement('div')
+  const span = document.createElement('span')
+
+
+
+  preloaderDiv.classList.add('preloader')
+  spinerDiv.classList.add('spinner')
+  span.classList.add('spinner-rotate')
+
+  body.appendChild(preloaderDiv)
+  preloaderDiv.appendChild(spinerDiv)
+  spinerDiv.appendChild(span)
+
+}
+
 function pageRender(){
+
 const pageTitle = document.createElement('title')
 const pageContainer = document.createElement('div')
 const mealWrapper = document.createElement('div')
@@ -69,6 +91,10 @@ mealDetailsContents.classList.add('meal-details-content')
 const pageHead = document.querySelector('head')
 const body = document.querySelector('body')
 pageHead.appendChild(pageTitle)
+// // preloader
+// const section1 = document.createElement('div')
+// section1.innerHTML='<section class="preloader" > <div class="spinner"> <span class="spinner-rotate"></span></div></section>'
+// body.appendChild(section1)
 body.appendChild(pageContainer)
 pageContainer.appendChild(mealWrapper)
 mealWrapper.appendChild(mealSearch)
@@ -94,8 +120,44 @@ mealDetailsBtn.appendChild(mealDetailsBtnIcon)
 mealDetails.appendChild(mealDetailsContents)
 
 }
+function doSomthing(data) {
+    let html = "";
+    if(data.meals){
+        data.meals.forEach(meal => {
+            html += `
+                <div class = "meal-item" data-id = "${meal.idMeal}">
+                    <div class = "meal-img">
+                        <img src = "${meal.strMealThumb}" alt = "food">
+                    </div>
+                    <div class = "meal-name">
+                        <h3>${meal.strMeal}</h3>
+                        <a href = "#" class = "recipe-btn">Get Recipe</a>
+                    </div>
+                </div>
+            `;
+        });
+        mealList.classList.remove('notFound');
+    } else{
+        html = "Sorry, we didn't find any meal!";
+        mealList.classList.add('notFound');
+    }
 
-pageRender()
+    mealList.innerHTML = html;
+};
+// get meal list that matches with the ingredients
+async function getMealList(){
+    let searchInputTxt = document.getElementById('search-input').value.trim();
+    const response = await fetch(`https://www.themealdb.com/api/json/v1/1/filter.php?i=${searchInputTxt}`)
+    const responseData = await response.json()
+    doSomthing(responseData)
+}
+
+
+function run(){
+  preloader()
+  pageRender()
+}
+run()
 // querying selectors
 
 const searchBtn = document.getElementById('search-btn');
@@ -111,36 +173,7 @@ recipeCloseBtn.addEventListener('click', () => {
 });
 
 
-// get meal list that matches with the ingredients
-function getMealList(){
-    let searchInputTxt = document.getElementById('search-input').value.trim();
-    fetch(`https://www.themealdb.com/api/json/v1/1/filter.php?i=${searchInputTxt}`)
-    .then(response => response.json())
-    .then(data => {
-        let html = "";
-        if(data.meals){
-            data.meals.forEach(meal => {
-                html += `
-                    <div class = "meal-item" data-id = "${meal.idMeal}">
-                        <div class = "meal-img">
-                            <img src = "${meal.strMealThumb}" alt = "food">
-                        </div>
-                        <div class = "meal-name">
-                            <h3>${meal.strMeal}</h3>
-                            <a href = "#" class = "recipe-btn">Get Recipe</a>
-                        </div>
-                    </div>
-                `;
-            });
-            mealList.classList.remove('notFound');
-        } else{
-            html = "Sorry, we didn't find any meal!";
-            mealList.classList.add('notFound');
-        }
 
-        mealList.innerHTML = html;
-    });
-}
 
 
 // get recipe of the meal
