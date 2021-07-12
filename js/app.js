@@ -30,6 +30,9 @@ function preloader(){
 }
 
 function pageRender(){
+if(document.querySelector('.preloader')!==null){
+  document.querySelector('.preloader').remove()
+}
 
 const pageTitle = document.createElement('title')
 const pageContainer = document.createElement('div')
@@ -155,7 +158,16 @@ async function getMealList(){
 
 function run(){
   preloader()
+const start = Date.now();
+setTimeout(() => {
+  const millis = Date.now() - start;
+
   pageRender()
+  console.log(`seconds elapsed = ${Math.floor(millis / 1000)}`);
+  // expected output: seconds elapsed = 2
+}, 5000);
+
+
 }
 run()
 // querying selectors
