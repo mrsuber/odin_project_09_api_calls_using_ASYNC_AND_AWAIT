@@ -165,7 +165,7 @@ setTimeout(() => {
   pageRender()
   console.log(`seconds elapsed = ${Math.floor(millis / 1000)}`);
   // expected output: seconds elapsed = 2
-}, 5000);
+}, 2000);
 
 
 }
